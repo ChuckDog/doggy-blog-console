@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { fetchAPI } from '@/lib/api';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { fetchAPI } from "@/lib/api";
 import {
   Box,
   Button,
@@ -17,8 +17,12 @@ import {
   Chip,
   IconButton,
   CircularProgress,
-} from '@mui/material';
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+} from "@mui/material";
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+} from "@mui/icons-material";
 
 interface Post {
   id: number;
@@ -29,6 +33,7 @@ interface Post {
   author: {
     username: string;
   };
+  likesCount?: number;
 }
 
 export default function PostsPage() {
@@ -36,7 +41,7 @@ export default function PostsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAPI('/posts')
+    fetchAPI("/posts")
       .then((data) => {
         setPosts(data);
         setLoading(false);
@@ -49,7 +54,7 @@ export default function PostsPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <CircularProgress />
       </Box>
     );
@@ -57,7 +62,14 @@ export default function PostsPage() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" component="h1" fontWeight="bold">
           Posts
         </Typography>
@@ -78,6 +90,7 @@ export default function PostsPage() {
               <TableCell>ID</TableCell>
               <TableCell>Title</TableCell>
               <TableCell>Slug</TableCell>
+              <TableCell>Likes</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
@@ -86,17 +99,18 @@ export default function PostsPage() {
             {posts.map((post) => (
               <TableRow
                 key={post.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
                   {post.id}
                 </TableCell>
                 <TableCell>{post.title}</TableCell>
                 <TableCell>{post.slug}</TableCell>
+                <TableCell>{post.likesCount || 0}</TableCell>
                 <TableCell>
                   <Chip
-                    label={post.published ? 'Published' : 'Draft'}
-                    color={post.published ? 'success' : 'warning'}
+                    label={post.published ? "Published" : "Draft"}
+                    color={post.published ? "success" : "warning"}
                     size="small"
                     variant="outlined"
                   />

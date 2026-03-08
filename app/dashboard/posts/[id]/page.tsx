@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { fetchAPI, getCategories, getPost, updatePost } from '@/lib/api';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { fetchAPI, getCategories, getPost, updatePost } from "@/lib/api";
 import {
   Box,
   Button,
@@ -17,21 +18,24 @@ import {
   Typography,
   Alert,
   CircularProgress,
-} from '@mui/material';
+} from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
 
 export default function EditPostPage() {
   const params = useParams();
   const id = params?.id;
   const router = useRouter();
-  
+
   const [loading, setLoading] = useState(true);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [slug, setSlug] = useState('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [slug, setSlug] = useState("");
   const [published, setPublished] = useState(false);
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
-  const [categoryId, setCategoryId] = useState<number | ''>('');
-  const [error, setError] = useState('');
+  const [categories, setCategories] = useState<{ id: number; name: string }[]>(
+    [],
+  );
+  const [categoryId, setCategoryId] = useState<number | "">("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const init = async () => {
@@ -40,9 +44,9 @@ export default function EditPostPage() {
           getCategories(),
           getPost(id as string),
         ]);
-        
+
         setCategories(cats);
-        
+
         if (post) {
           setTitle(post.title);
           setContent(post.content);
@@ -50,11 +54,11 @@ export default function EditPostPage() {
           setPublished(post.published);
           setCategoryId(post.categoryId);
         } else {
-          setError('Post not found');
+          setError("Post not found");
         }
       } catch (err: any) {
         console.error(err);
-        setError('Failed to load post data');
+        setError("Failed to load post data");
       } finally {
         setLoading(false);
       }
@@ -68,7 +72,7 @@ export default function EditPostPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!categoryId) {
-      setError('Please select a category');
+      setError("Please select a category");
       return;
     }
     try {
@@ -79,28 +83,38 @@ export default function EditPostPage() {
         published,
         categoryId: Number(categoryId),
       });
-      router.push('/dashboard/posts');
+      router.push("/dashboard/posts");
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Failed to update post');
+      setError(err.message || "Failed to update post");
     }
   };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
-      <Paper sx={{ p: 4 }}>
-        <Typography variant="h5" component="h1" gutterBottom fontWeight="bold">
+    <Box sx={{ maxWidth: 800, mx: "auto", mt: 4 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+        <Button
+          startIcon={<ArrowBack />}
+          component={Link}
+          href="/dashboard/posts"
+          sx={{ mr: 2 }}
+        >
+          Back
+        </Button>
+        <Typography variant="h5" component="h1" fontWeight="bold">
           Edit Post
         </Typography>
+      </Box>
 
+      <Paper sx={{ p: 4 }}>
         {error && (
           <Alert severity="error" sx={{ mb: 3 }}>
             {error}
@@ -125,7 +139,7 @@ export default function EditPostPage() {
             onChange={(e) => setSlug(e.target.value)}
             helperText="URL-friendly version of the title"
           />
-          
+
           <FormControl fullWidth margin="normal">
             <InputLabel id="category-label">Category</InputLabel>
             <Select
